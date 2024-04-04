@@ -27,29 +27,41 @@
       margin-top: 20px;
       font-size: 24px;
     }
+    #selectedName {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .btn {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 <body>
   <div id="spinner"></div>
   <div id="name"></div>
-  <button id="continueBtn" style="display: none;">Continue</button>
+  <div id="selectedName"></div>
+  <button id="continueBtn" class="btn" style="display: none;">Continue</button>
+  <button id="editNamesBtn" class="btn" style="display: none;">Edit Names</button>
 
   <script>
     let names = [];
     let currentIndex = -1;
 
-    while (names.length < 1 || names.length > 10) {
-      const name = prompt("Enter a name (up to 10 names):");
-      if (name === null) {
-        alert("You must enter at least one name.");
-        continue;
-      }
-      names.push(name.trim());
-    }
-
     const spinner = document.getElementById("spinner");
     const nameDisplay = document.getElementById("name");
+    const selectedNameDisplay = document.getElementById("selectedName");
     const continueBtn = document.getElementById("continueBtn");
+    const editNamesBtn = document.getElementById("editNamesBtn");
 
     function spinWheel() {
       currentIndex = Math.floor(Math.random() * names.length);
@@ -58,24 +70,58 @@
       continueBtn.style.display = "none";
     }
 
-    spinner.addEventListener("animationiteration", () => {
+    function showContinueButton() {
       spinner.style.animationPlayState = "paused";
       continueBtn.style.display = "block";
-    });
+      selectedNameDisplay.textContent = `${names[currentIndex]} was selected.`;
+    }
 
-    continueBtn.addEventListener("click", () => {
-      if (currentIndex !== -1) {
-        names.splice(currentIndex, 1);
-        if (names.length === 0) {
-          nameDisplay.textContent = "No more names";
-          continueBtn.disabled = true;
-        } else {
-          spinWheel();
-        }
+    function continueSelection() {
+      names.splice(currentIndex, 1);
+      if (names.length === 0) {
+        nameDisplay.textContent = "No more names";
+        continueBtn.disabled = true;
+        editNamesBtn.style.display = "block";
+      } else {
+        spinWheel();
       }
-    });
+    }
 
-    spinWheel();
+    function editNames() {
+      names.length = 0; // Clear the names array
+      nameDisplay.textContent = "";
+      selectedNameDisplay.textContent = "";
+      continueBtn.style.display = "none";
+      editNamesBtn.style.display = "none";
+      addNames(); // Re-enable adding names
+    }
+
+    function addNames() {
+      const namesString = prompt("Enter names separated by commas (up to 10):");
+      if (namesString === null || namesString.trim() === "") {
+        alert("Please enter at least one name.");
+        return;
+      }
+      names = namesString.split(",").map(name => name.trim()).filter(name => name !== "");
+      if (names.length > 10) {
+        alert("Only the first 10 names will be used.");
+        names = names.slice(0, 10);
+      }
+      if (names.length === 0) {
+        alert("Please enter at least one valid name.");
+      } else {
+        spinWheel();
+      }
+    }
+
+    spinner.addEventListener("animationiteration", showContinueButton);
+
+    continueBtn.addEventListener("click", continueSelection);
+
+    editNamesBtn.addEventListener("click", editNames);
+
+    addNames();
+
   </script>
 </body>
 </html>
