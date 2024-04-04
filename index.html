@@ -58,7 +58,18 @@
 <body>
   <div id="countdown">3</div>
   <div id="selectedName"></div>
-  <ul id="nameList"></ul>
+  <ul id="nameList">
+    <li>1. Lorem Ipsum</li>
+    <li>2. Lorem Ipsum</li>
+    <li>3. Lorem Ipsum</li>
+    <li>4. Lorem Ipsum</li>
+    <li>5. Lorem Ipsum</li>
+    <li>6. Lorem Ipsum</li>
+    <li>7. Lorem Ipsum</li>
+    <li>8. Lorem Ipsum</li>
+    <li>9. Lorem Ipsum</li>
+    <li>10. Lorem Ipsum</li>
+  </ul>
   <button id="startBtn" class="btn">Start Countdown</button>
 
   <script>
@@ -91,19 +102,14 @@
     }
 
     function updateNameList() {
-      nameList.innerHTML = ""; // Clear previous list
-      names.forEach((name, index) => {
-        const listItem = document.createElement("li");
-        listItem.textContent = `${index + 1}. ${name}`;
-        listItem.addEventListener("click", () => {
-          const newName = prompt("Edit name:", name);
-          if (newName !== null && newName.trim() !== "") {
-            names[index] = newName.trim();
-            updateNameList();
-          }
-        });
-        nameList.appendChild(listItem);
-      });
+      for (let i = 0; i < 10; i++) {
+        const listItem = nameList.children[i];
+        if (i < names.length) {
+          listItem.textContent = `${i + 1}. ${names[i]}`;
+        } else {
+          listItem.textContent = `${i + 1}. Lorem Ipsum`;
+        }
+      }
     }
 
     function initialize() {
