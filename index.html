@@ -31,6 +31,18 @@
       margin-top: 20px;
       font-size: 18px;
     }
+    #nameList {
+      margin-top: 20px;
+      font-size: 16px;
+      text-align: left;
+      width: 200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #nameList li {
+      list-style: none;
+      margin-bottom: 5px;
+    }
     .btn {
       margin: 10px;
       padding: 10px 20px;
@@ -50,8 +62,9 @@
   <div id="spinner"></div>
   <div id="name"></div>
   <div id="selectedName"></div>
+  <ul id="nameList"></ul>
   <button id="continueBtn" class="btn" style="display: none;">Continue</button>
-  <button id="editNamesBtn" class="btn" style="display: none;">Edit Names</button>
+  <button id="editNamesBtn" class="btn">Edit Names</button>
 
   <script>
     let names = [];
@@ -60,6 +73,7 @@
     const spinner = document.getElementById("spinner");
     const nameDisplay = document.getElementById("name");
     const selectedNameDisplay = document.getElementById("selectedName");
+    const nameList = document.getElementById("nameList");
     const continueBtn = document.getElementById("continueBtn");
     const editNamesBtn = document.getElementById("editNamesBtn");
 
@@ -74,6 +88,7 @@
       spinner.style.animationPlayState = "paused";
       continueBtn.style.display = "block";
       selectedNameDisplay.textContent = `${names[currentIndex]} was selected.`;
+      updateNameList();
     }
 
     function continueSelection() {
@@ -88,30 +103,27 @@
     }
 
     function editNames() {
-      names.length = 0; // Clear the names array
-      nameDisplay.textContent = "";
-      selectedNameDisplay.textContent = "";
-      continueBtn.style.display = "none";
-      editNamesBtn.style.display = "none";
-      addNames(); // Re-enable adding names
+      const newName = prompt(`Enter a name (${names.length + 1}/10):`);
+      if (newName !== null && newName.trim() !== "") {
+        if (names.length < 10) {
+          names.push(newName.trim());
+          updateNameList();
+          if (names.length === 10) {
+            editNamesBtn.disabled = true;
+          }
+        } else {
+          alert("You have reached the maximum limit of 10 names.");
+        }
+      }
     }
 
-    function addNames() {
-      const namesString = prompt("Enter names separated by commas (up to 10):");
-      if (namesString === null || namesString.trim() === "") {
-        alert("Please enter at least one name.");
-        return;
-      }
-      names = namesString.split(",").map(name => name.trim()).filter(name => name !== "");
-      if (names.length > 10) {
-        alert("Only the first 10 names will be used.");
-        names = names.slice(0, 10);
-      }
-      if (names.length === 0) {
-        alert("Please enter at least one valid name.");
-      } else {
-        spinWheel();
-      }
+    function updateNameList() {
+      nameList.innerHTML = ""; // Clear previous list
+      names.forEach((name, index) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${index + 1}. ${name}`;
+        nameList.appendChild(listItem);
+      });
     }
 
     spinner.addEventListener("animationiteration", showContinueButton);
@@ -120,8 +132,7 @@
 
     editNamesBtn.addEventListener("click", editNames);
 
-    addNames();
-
+    spinWheel();
   </script>
 </body>
 </html>
